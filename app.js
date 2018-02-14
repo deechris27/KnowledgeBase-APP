@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
+const config = require('./config/database');
+const passport = require('passport');
 
 let Article = require('./models/article');
-mongoose.connect('mongodb://localhost/KnowledgeBaseDB');
+mongoose.connect(config.database);
 let db = mongoose.connection;
 
 //check connection
@@ -61,6 +63,12 @@ app.use(expressValidator({
 //view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+require('./config/passport')(passport);
+
+//Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 //home route
 app.get('/', function(req, res){
